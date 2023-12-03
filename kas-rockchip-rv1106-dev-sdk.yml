@@ -1,0 +1,9 @@
+header:
+  version: 15
+  includes:
+  - kas-rockchip-rv1106-dev.yml
+
+target:
+  - core-image-minimal
+
+task: populate_sdk
