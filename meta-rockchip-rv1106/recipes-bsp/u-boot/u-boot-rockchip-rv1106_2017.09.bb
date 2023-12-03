@@ -10,6 +10,7 @@ SRC_URI = "\
     git://github.com/LuckfoxTECH/luckfox-pico;protocol=https;branch=main;subpath=sysdrv/source/uboot \
     file://env.txt \
     file://RV1106MINIALL.ini \
+    file://relocated-environment.cfg \
 "
 
 SRCREV = "5532a62450068bb779b8b38706503433bf755fd1"
@@ -30,7 +31,7 @@ do_configure[cleandirs] = "${B}"
 
 do_compile:append () {
     ${S}/../rkbin/tools/boot_merger ${WORKDIR}/RV1106MINIALL.ini
-    mkenvimage -s 32768 -p 0x0 -o env.img ${WORKDIR}/env.txt
+    mkenvimage -s 8192 -p 0x0 -o env.img ${WORKDIR}/env.txt
 }
 
 do_deploy:append () {
