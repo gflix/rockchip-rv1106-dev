@@ -15,18 +15,6 @@ repos:
       meta:
       meta-poky:
 
-  openembedded:
-    url: https://github.com/openembedded/meta-openembedded
-    path: layers/meta-openembedded
-    commit: c93994f1bb601c57548b588d4f77a044d90822cf
-    layers:
-      meta-oe:
-
-  meta-ptx:
-    url: https://git.pengutronix.de/git/meta-ptx
-    path: layers/meta-ptx
-    commit: 59a6fbbaf56526c91ca0926c6833b32489e8536c
-
   rockchip-rv1106:
     layers:
       meta-rockchip-rv1106:

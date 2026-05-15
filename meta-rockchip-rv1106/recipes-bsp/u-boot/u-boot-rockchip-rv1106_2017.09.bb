@@ -11,6 +11,7 @@ SRC_URI = "\
     file://env.txt \
     file://RV1106MINIALL.ini \
     file://relocated-environment.cfg \
+    file://features.cfg \
 "
 
 SRCREV = "5532a62450068bb779b8b38706503433bf755fd1"

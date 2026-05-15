@@ -1,0 +1,6 @@
+# Disk layout for Rockchip RV1106
+# u-boot-default-env at 24K, idblock at 32K, u-boot at 544K
+
+part u-boot-env --source rawcopy --sourceparams="file=u-boot-default-env.img" --ondisk mmcblk --no-table --align 24
+part idblock --source rawcopy --sourceparams="file=idblock.img" --ondisk mmcblk --no-table --align 32
+part u-boot --source rawcopy --sourceparams="file=u-boot.img" --ondisk mmcblk --no-table --align 544
