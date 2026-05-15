@@ -10,7 +10,7 @@ repos:
   poky:
     url: https://github.com/yoctoproject/poky
     path: layers/poky
-    commit: 7b8aa378d069ee31373f22caba3bd7fc7863f447
+    commit: 1e8099846661571ede077f533eb1b6c86818ddce
     layers:
       meta:
       meta-poky:
@@ -18,20 +18,17 @@ repos:
   meta-ptx:
     url: https://git.pengutronix.de/git/meta-ptx
     path: layers/meta-ptx
-    commit: 23f79905239f0dae2bb6736e7691a3080bac23dd
+    commit: 1189ee566604d7439e824242825da29ae3729ae5
 
   rockchip-rv1106:
     layers:
       meta-rockchip-rv1106:
 
-bblayers_conf_header:
-  standard: |
-    POKY_BBLAYERS_CONF_VERSION = "2"
-    BBPATH = "${TOPDIR}"
-    BBFILES ?= ""
 local_conf_header:
-  custom_deploy_dir: |
+  custom_dirs: |
     DEPLOY_DIR = "${TOPDIR}/deploy"
+    DL_DIR = "${TOPDIR}/../downloads"
+    SSTATE_DIR = "${TOPDIR}/../sstate-cache"
   standard: |
     CONF_VERSION = "2"
     SDKMACHINE = "x86_64"
@@ -40,8 +37,8 @@ local_conf_header:
     INHERIT += "rm_work"
   debug-tweaks: |
     EXTRA_IMAGE_FEATURES = "debug-tweaks"
-  diskmon: |
-    BB_DISKMON_DIRS = "\
+  disk-monitor: |
+    BB_DISKMON_DIRS ??= "\
         STOPTASKS,${TMPDIR},1G,100K \
         STOPTASKS,${DL_DIR},1G,100K \
         STOPTASKS,${SSTATE_DIR},1G,100K \
