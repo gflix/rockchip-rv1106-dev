@@ -30,8 +30,8 @@ inherit pkgconfig deploy
 do_configure[cleandirs] = "${B}"
 
 do_compile:append () {
-    ${S}/../rkbin/tools/boot_merger ${WORKDIR}/RV1106MINIALL.ini
-    mkenvimage -s 8192 -p 0x0 -o env.img ${WORKDIR}/env.txt
+    ${S}/../rkbin/tools/boot_merger ${UNPACKDIR}/RV1106MINIALL.ini
+    mkenvimage -s 8192 -p 0x0 -o env.img ${UNPACKDIR}/env.txt
 }
 
 do_deploy:append () {

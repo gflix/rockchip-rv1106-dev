@@ -10,15 +10,22 @@ repos:
   poky:
     url: https://github.com/yoctoproject/poky
     path: layers/poky
-    commit: 1e8099846661571ede077f533eb1b6c86818ddce
+    commit: 70dc28ac287bf35541270cae1d99130a0f6b7b5f
     layers:
       meta:
       meta-poky:
 
+  openembedded:
+    url: https://github.com/openembedded/meta-openembedded
+    path: layers/meta-openembedded
+    commit: c93994f1bb601c57548b588d4f77a044d90822cf
+    layers:
+      meta-oe:
+
   meta-ptx:
     url: https://git.pengutronix.de/git/meta-ptx
     path: layers/meta-ptx
-    commit: 1189ee566604d7439e824242825da29ae3729ae5
+    commit: 59a6fbbaf56526c91ca0926c6833b32489e8536c
 
   rockchip-rv1106:
     layers:
@@ -36,7 +43,7 @@ local_conf_header:
   reduce_diskspace: |
     INHERIT += "rm_work"
   debug-tweaks: |
-    EXTRA_IMAGE_FEATURES = "debug-tweaks"
+    EXTRA_IMAGE_FEATURES = "allow-empty-password empty-root-password allow-root-login"
   disk-monitor: |
     BB_DISKMON_DIRS ??= "\
         STOPTASKS,${TMPDIR},1G,100K \
