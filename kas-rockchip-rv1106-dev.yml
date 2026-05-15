@@ -10,7 +10,7 @@ repos:
   poky:
     url: https://github.com/yoctoproject/poky
     path: layers/poky
-    branch: nanbield
+    commit: 7b8aa378d069ee31373f22caba3bd7fc7863f447
     layers:
       meta:
       meta-poky:
@@ -18,7 +18,7 @@ repos:
   meta-ptx:
     url: https://git.pengutronix.de/git/meta-ptx
     path: layers/meta-ptx
-    branch: master
+    commit: 23f79905239f0dae2bb6736e7691a3080bac23dd
 
   rockchip-rv1106:
     layers:
