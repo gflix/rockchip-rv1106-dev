@@ -10,7 +10,7 @@ repos:
   poky:
     url: https://github.com/yoctoproject/poky
     path: layers/poky
-    commit: 70dc28ac287bf35541270cae1d99130a0f6b7b5f
+    commit: d0b46a6624ec9c61c47270745dd0b2d5abbe6ac1
     layers:
       meta:
       meta-poky:
