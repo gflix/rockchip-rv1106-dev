@@ -1,0 +1,25 @@
+From 2f44e5c79610b4eabd222fa52d5610b73fa144c3 Mon Sep 17 00:00:00 2001
+From: Felix Mellmann <flix@benfm.de>
+Date: Sat, 16 May 2026 14:41:56 +0200
+Subject: [PATCH] Override RV1106 boot command
+
+Upstream-Status: Inappropriate [still under development]
+---
+ include/configs/evb_rv1106.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/u-boot/include/configs/evb_rv1106.h b/u-boot/include/configs/evb_rv1106.h
+index f487273bd..6a796a2e4 100644
+--- a/include/configs/evb_rv1106.h
++++ b/include/configs/evb_rv1106.h
+@@ -33,7 +33,7 @@
+ #ifdef CONFIG_SPL_KERNEL_BOOT
+ #define CONFIG_BOOTCOMMAND "reset"
+ #else
+-#define CONFIG_BOOTCOMMAND RKIMG_BOOTCOMMAND
++#define CONFIG_BOOTCOMMAND "read ${devtype} ${devnum} ${ramdisk_addr_r} 1000 1000 && bootm ${ramdisk_addr_r} -"
+ #endif
+
+ #endif /* !CONFIG_SPL_BUILD */
+--
+2.43.0

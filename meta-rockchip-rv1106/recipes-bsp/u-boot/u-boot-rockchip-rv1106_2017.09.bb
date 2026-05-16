@@ -8,6 +8,7 @@ LIC_FILES_CHKSUM = "file://Licenses/README;md5=a2c678cfd4a4d97135585cad908541c6"
 
 SRC_URI = "\
     git://github.com/LuckfoxTECH/luckfox-pico;protocol=https;branch=main;subpath=sysdrv/source/uboot \
+    file://0001-Override-RV1106-boot-command.patch \
     file://env.txt \
     file://RV1106MINIALL.ini \
     file://relocated-environment.cfg \
