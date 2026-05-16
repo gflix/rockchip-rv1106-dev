@@ -7,12 +7,24 @@ target:
   - sdcard
 
 repos:
-  poky:
-    url: https://github.com/yoctoproject/poky
-    path: layers/poky
-    commit: d0b46a6624ec9c61c47270745dd0b2d5abbe6ac1
+  bitbake:
+    url: https://github.com/openembedded/bitbake
+    path: layers/bitbake
+    commit: 713fbbdb9ecc195ceb2216a2345e0d79dbee2135
+    layers: {}
+
+  openembedded-core:
+    url: https://github.com/openembedded/openembedded-core
+    path: layers/openembedded-core
+    commit: 8751ec83421192fc0f8495fb95798f9eb7be77a0
     layers:
       meta:
+
+  yocto:
+    url: https://git.yoctoproject.org/meta-yocto
+    path: layers/meta-yocto
+    commit: 3f2e6b6fadfa542f0fe3738375a2f9fcbd4c1f6e
+    layers:
       meta-poky:
 
   rockchip-rv1106:
