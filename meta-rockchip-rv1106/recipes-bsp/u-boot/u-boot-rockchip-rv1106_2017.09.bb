@@ -19,7 +19,7 @@ RM_WORK_EXCLUDE += "${PN} "
 
 COMPATIBLE_MACHINE:cura = "(rockchip-rv1106)"
 
-S = "${WORKDIR}/uboot/u-boot"
+S = "${UNPACKDIR}/uboot/u-boot"
 B = "${WORKDIR}/build"
 
 EXTRA_OEMAKE += " KCFLAGS='-Wno-error=enum-int-mismatch -Wno-error=address -Wno-error=maybe-uninitialized' "
@@ -27,11 +27,16 @@ DEPENDS += "bc-native coreutils-native u-boot-tools-native"
 
 inherit pkgconfig deploy
 
+do_patch_post () {
+    sed -i -e "s|@SOURCE_DIR@|${S}|g" -e "s|@BUILD_DIR@|${B}|g" ${UNPACKDIR}/RV1106MINIALL.ini
+}
+addtask patch_post after do_patch before do_configure
+
 do_configure[cleandirs] = "${B}"
 
 do_compile:append () {
-    ${S}/../rkbin/tools/boot_merger ${WORKDIR}/RV1106MINIALL.ini
-    mkenvimage -s 8192 -p 0x0 -o env.img ${WORKDIR}/env.txt
+    ${S}/../rkbin/tools/boot_merger ${UNPACKDIR}/RV1106MINIALL.ini
+    mkenvimage -s 8192 -p 0x0 -o env.img ${UNPACKDIR}/env.txt
 }
 
 do_deploy:append () {

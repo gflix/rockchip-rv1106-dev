@@ -7,31 +7,35 @@ target:
   - sdcard
 
 repos:
-  poky:
-    url: https://github.com/yoctoproject/poky
-    path: layers/poky
-    branch: nanbield
+  bitbake:
+    url: https://github.com/openembedded/bitbake
+    path: layers/bitbake
+    commit: 33581c84f3a85008239acbd940501a35de48dc91
+    layers: {}
+
+  openembedded-core:
+    url: https://github.com/openembedded/openembedded-core
+    path: layers/openembedded-core
+    commit: 42fa856a00ac16b2a7a83d7ecfa60a5be192b16c
     layers:
       meta:
-      meta-poky:
 
-  meta-ptx:
-    url: https://git.pengutronix.de/git/meta-ptx
-    path: layers/meta-ptx
-    branch: master
+  yocto:
+    url: https://git.yoctoproject.org/meta-yocto
+    path: layers/meta-yocto
+    commit: 904846ae078ee20de073040ebb77c86e19250f56
+    layers:
+      meta-poky:
 
   rockchip-rv1106:
     layers:
       meta-rockchip-rv1106:
 
-bblayers_conf_header:
-  standard: |
-    POKY_BBLAYERS_CONF_VERSION = "2"
-    BBPATH = "${TOPDIR}"
-    BBFILES ?= ""
 local_conf_header:
-  custom_deploy_dir: |
+  custom_dirs: |
     DEPLOY_DIR = "${TOPDIR}/deploy"
+    DL_DIR = "${TOPDIR}/../downloads"
+    SSTATE_DIR = "${TOPDIR}/../sstate-cache"
   standard: |
     CONF_VERSION = "2"
     SDKMACHINE = "x86_64"
@@ -39,9 +43,9 @@ local_conf_header:
   reduce_diskspace: |
     INHERIT += "rm_work"
   debug-tweaks: |
-    EXTRA_IMAGE_FEATURES = "debug-tweaks"
-  diskmon: |
-    BB_DISKMON_DIRS = "\
+    EXTRA_IMAGE_FEATURES = "allow-empty-password empty-root-password allow-root-login"
+  disk-monitor: |
+    BB_DISKMON_DIRS ??= "\
         STOPTASKS,${TMPDIR},1G,100K \
         STOPTASKS,${DL_DIR},1G,100K \
         STOPTASKS,${SSTATE_DIR},1G,100K \
