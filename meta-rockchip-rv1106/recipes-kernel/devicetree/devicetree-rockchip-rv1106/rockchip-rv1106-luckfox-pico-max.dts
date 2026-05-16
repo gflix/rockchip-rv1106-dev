@@ -11,6 +11,10 @@
         model = "Rockchip RV1106G EVB1 V11 Board (DUMMY)";
         compatible = "rockchip,rv1106g-evb1-v11", "rockchip,rv1106";
 
+        chosen {
+                bootargs = "earlycon=uart8250,mmio32,0xff4c0000 console=ttyFIQ0 snd_soc_core.prealloc_buffer_size_kbytes=16 coherent_pool=0";
+        };
+
         /delete-node/ vcc5v0-usb;
 };
 

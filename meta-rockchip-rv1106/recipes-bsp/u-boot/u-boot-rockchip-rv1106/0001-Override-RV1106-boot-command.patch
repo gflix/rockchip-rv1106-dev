@@ -17,7 +17,7 @@ index f487273bd..6a796a2e4 100644
  #define CONFIG_BOOTCOMMAND "reset"
  #else
 -#define CONFIG_BOOTCOMMAND RKIMG_BOOTCOMMAND
-+#define CONFIG_BOOTCOMMAND "read ${devtype} ${devnum} ${ramdisk_addr_r} 1000 1000 && bootm ${ramdisk_addr_r} -"
++#define CONFIG_BOOTCOMMAND "read ${devtype} ${devnum} ${ramdisk_addr_r} 1000 3000 && bootm ${ramdisk_addr_r}"
  #endif
 
  #endif /* !CONFIG_SPL_BUILD */

@@ -28,9 +28,9 @@ to the PCB (i.e. Luckfox Pico Mini without Flash).
 
 ## Current state
 
-The SD card image includes the pre-boot loader, U-Boot, and a FIT image containing the Linux kernel along with
-a minimal device tree. U-Boot carries a modified boot command that loads the FIT image from a fixed offset on
-the SD card and boots it directly.
+The SD card image includes the pre-boot loader, U-Boot, and a FIT image containing the Linux kernel,
+a minimal device tree, and a small initramfs root filesystem. U-Boot carries a modified boot command
+that loads the FIT image from a fixed offset on the SD card and boots it directly.
 
 The U-Boot default environment includes a `boot_net` script that can be used to load and run
 the FIT image from a TFTP server instead of the SD card.
@@ -41,5 +41,5 @@ the FIT image from a TFTP server instead of the SD card.
 
 ## Known limitations
 
-There is no root filesystem yet. The kernel will boot but stall waiting for the root device
-specified in the device tree bootargs, which does not exist on the SD card.
+The Linux kernel from Rockchip's `develop-5.10` branch was the last known working version.
+Newer branches (`develop-6.1`, `develop-6.6`) have been tested but did not boot successfully.

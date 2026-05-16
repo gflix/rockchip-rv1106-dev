@@ -2,7 +2,7 @@ header:
   version: 15
 
 machine: rockchip-rv1106
-distro: poky
+distro: platform-test
 target:
   - sdcard
 
