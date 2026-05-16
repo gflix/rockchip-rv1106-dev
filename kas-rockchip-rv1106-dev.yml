@@ -10,20 +10,20 @@ repos:
   bitbake:
     url: https://github.com/openembedded/bitbake
     path: layers/bitbake
-    commit: 713fbbdb9ecc195ceb2216a2345e0d79dbee2135
+    commit: 33581c84f3a85008239acbd940501a35de48dc91
     layers: {}
 
   openembedded-core:
     url: https://github.com/openembedded/openembedded-core
     path: layers/openembedded-core
-    commit: 8751ec83421192fc0f8495fb95798f9eb7be77a0
+    commit: 42fa856a00ac16b2a7a83d7ecfa60a5be192b16c
     layers:
       meta:
 
   yocto:
     url: https://git.yoctoproject.org/meta-yocto
     path: layers/meta-yocto
-    commit: 3f2e6b6fadfa542f0fe3738375a2f9fcbd4c1f6e
+    commit: 904846ae078ee20de073040ebb77c86e19250f56
     layers:
       meta-poky:
 
