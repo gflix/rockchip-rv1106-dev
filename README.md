@@ -32,6 +32,13 @@ The SD card image includes the pre-boot loader, U-Boot, and a FIT image containi
 a minimal device tree. U-Boot carries a modified boot command that loads the FIT image from a fixed offset on
 the SD card and boots it directly.
 
+The U-Boot default environment includes a `boot_net` script that can be used to load and run
+the FIT image from a TFTP server instead of the SD card.
+
+```
+=> run boot_net
+```
+
 ## Known limitations
 
 There is no root filesystem yet. The kernel will boot but stall waiting for the root device
