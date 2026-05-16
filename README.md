@@ -20,7 +20,7 @@ When finished the SD card image can be found at `build/deploy/images/rockchip-rv
 Write the image to an empty SD card, i.e:
 
 ```
-$ dd if=build/deploy/images/rockchip-rv1106/sdcard-rockchip-rv1106.img of=/dev/<path_to_sd_card> bs=4M oflag=sync
+$ dd if=build/deploy/images/rockchip-rv1106/sdcard-rockchip-rv1106.rootfs.wic of=/dev/<path_to_sd_card> bs=4M oflag=sync
 ```
 
 The SoC only boots from SD card, when when SPI does not have a bootable image or if the SPI flash is not deployed
