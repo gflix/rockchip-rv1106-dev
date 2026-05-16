@@ -8,16 +8,18 @@ LIC_FILES_CHKSUM = "file://Licenses/README;md5=a2c678cfd4a4d97135585cad908541c6"
 
 SRC_URI = "\
     git://github.com/LuckfoxTECH/luckfox-pico;protocol=https;branch=main;subpath=sysdrv/source/uboot \
+    file://0001-Override-RV1106-boot-command.patch \
     file://env.txt \
     file://RV1106MINIALL.ini \
     file://relocated-environment.cfg \
+    file://configure-features.cfg \
 "
 
 SRCREV = "5532a62450068bb779b8b38706503433bf755fd1"
 
 RM_WORK_EXCLUDE += "${PN} "
 
-COMPATIBLE_MACHINE:cura = "(rockchip-rv1106)"
+COMPATIBLE_MACHINE:rockchip-rv1106 = "(rockchip-rv1106)"
 
 S = "${UNPACKDIR}/uboot/u-boot"
 B = "${WORKDIR}/build"

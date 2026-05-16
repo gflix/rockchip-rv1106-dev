@@ -3,7 +3,7 @@ COMPATIBLE_MACHINE = "(rockchip-rv1106)"
 
 IMAGE_FSTYPES = "wic"
 WKS_FILE = "rockchip-rv1106.wks"
-WKS_FILE_DEPENDS = "virtual/bootloader"
+WKS_FILE_DEPENDS = "virtual/bootloader linux-yocto-fitimage"
 
 inherit image
 
