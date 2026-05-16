@@ -11,13 +11,14 @@ SRC_URI = "\
     file://env.txt \
     file://RV1106MINIALL.ini \
     file://relocated-environment.cfg \
+    file://configure-features.cfg \
 "
 
 SRCREV = "5532a62450068bb779b8b38706503433bf755fd1"
 
 RM_WORK_EXCLUDE += "${PN} "
 
-COMPATIBLE_MACHINE:cura = "(rockchip-rv1106)"
+COMPATIBLE_MACHINE:rockchip-rv1106 = "(rockchip-rv1106)"
 
 S = "${UNPACKDIR}/uboot/u-boot"
 B = "${WORKDIR}/build"
