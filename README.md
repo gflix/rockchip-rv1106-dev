@@ -15,7 +15,7 @@ an empty directory outside this tree:
 $ kas build ../rockchip-rv1106-dev/kas-rockchip-rv1106-dev.yml
 ```
 
-When finished the SD card image can be found at `build/deploy/images/rockchip-rv1106/sdcard-rockchip-rv1106.img`.
+When finished the SD card image can be found at `build/deploy/images/rockchip-rv1106/sdcard-rockchip-rv1106.rootfs.wic`.
 
 Write the image to an empty SD card, i.e:
 
@@ -26,6 +26,13 @@ $ dd if=build/deploy/images/rockchip-rv1106/sdcard-rockchip-rv1106.rootfs.wic of
 The SoC only boots from SD card, when when SPI does not have a bootable image or if the SPI flash is not deployed
 to the PCB (i.e. Luckfox Pico Mini without Flash).
 
+## Current state
+
+The SD card image includes the pre-boot loader, U-Boot, and a FIT image containing the Linux kernel along with
+a minimal device tree. U-Boot carries a modified boot command that loads the FIT image from a fixed offset on
+the SD card and boots it directly.
+
 ## Known limitations
 
-Currently the kernel is not integrated so the SD card image only includes the pre-boot loader and U-Boot.
+There is no root filesystem yet. The kernel will boot but stall waiting for the root device
+specified in the device tree bootargs, which does not exist on the SD card.
