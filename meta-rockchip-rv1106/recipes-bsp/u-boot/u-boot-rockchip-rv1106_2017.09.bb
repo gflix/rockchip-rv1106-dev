@@ -1,13 +1,12 @@
+require recipes-bsp/u-boot/u-boot-common.inc
 require recipes-bsp/u-boot/u-boot.inc
 
-DESCRIPTION = "U-Boot with modifications for the Rockchip RV1106 SoC"
-PROVIDES += "u-boot"
-
-LICENSE = "GPL-2.0-or-later"
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=a2c678cfd4a4d97135585cad908541c6"
 
-SRC_URI = "\
-    git://github.com/LuckfoxTECH/luckfox-pico;protocol=https;branch=main;subpath=sysdrv/source/uboot \
+SRCREV = "c98ac3487e413c71e5d36322ef3324b21c6f60f9"
+
+SRC_URI:append = "\
+    file://0001-Imported-full-set-of-Rockchip-s-modifications.patch \
     file://0001-Override-RV1106-boot-command.patch \
     file://env.txt \
     file://RV1106MINIALL.ini \
@@ -15,29 +14,26 @@ SRC_URI = "\
     file://configure-features.cfg \
 "
 
-SRCREV = "824b817f889c2cbff1d48fcdb18ab494a68f69d1"
+PATCHTOOL = "git"
 
-RM_WORK_EXCLUDE += "${PN} "
-
-COMPATIBLE_MACHINE:rockchip-rv1106 = "(rockchip-rv1106)"
-
-S = "${UNPACKDIR}/uboot/u-boot"
-B = "${WORKDIR}/build"
-
-EXTRA_OEMAKE += " KCFLAGS='-Wno-error=enum-int-mismatch -Wno-error=address -Wno-error=maybe-uninitialized' "
-DEPENDS += "bc-native coreutils-native u-boot-tools-native"
-
-inherit pkgconfig deploy
+EXTRA_OEMAKE:append = "\
+    KCFLAGS='-Wno-error=enum-int-mismatch -Wno-error=address -Wno-error=maybe-uninitialized' \
+"
+DEPENDS:append = "\
+    bc-native \
+    coreutils-native \
+    rockchip-rkbin \
+    rockchip-rkbin-native \
+    u-boot-tools-native \
+"
 
 do_patch_post () {
-    sed -i -e "s|@SOURCE_DIR@|${S}|g" -e "s|@BUILD_DIR@|${B}|g" ${UNPACKDIR}/RV1106MINIALL.ini
+    sed -i -e "s|@DEPLOY_DIR_IMAGE@|${DEPLOY_DIR_IMAGE}|g" -e "s|@BUILD_DIR@|${B}|g" ${UNPACKDIR}/RV1106MINIALL.ini
 }
 addtask patch_post after do_patch before do_configure
 
-do_configure[cleandirs] = "${B}"
-
 do_compile:append () {
-    ${S}/../rkbin/tools/boot_merger ${UNPACKDIR}/RV1106MINIALL.ini
+    boot_merger ${UNPACKDIR}/RV1106MINIALL.ini
     mkenvimage -s 8192 -p 0x0 -o env.img ${UNPACKDIR}/env.txt
 }
 
