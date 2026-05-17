@@ -15,7 +15,7 @@ SRC_URI = "\
     file://configure-features.cfg \
 "
 
-SRCREV = "5532a62450068bb779b8b38706503433bf755fd1"
+SRCREV = "824b817f889c2cbff1d48fcdb18ab494a68f69d1"
 
 RM_WORK_EXCLUDE += "${PN} "
 
