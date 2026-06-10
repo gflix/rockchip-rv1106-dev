@@ -1,49 +1,28 @@
 // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 /*
- * Copyright (c) 2022 Rockchip Electronics Co., Ltd.
+ * RV1106 EVB - minimal bringup board DTS.
+ *
+ * Copyright (c) 2026 Felix Mellmann <flix@benfm.de>
  */
 
 /dts-v1/;
 
-#include "rv1106g-evb1-v10.dts"
+#include "rv1106.dtsi"
 
 / {
-        model = "Rockchip RV1106G EVB1 V11 Board (DUMMY)";
-        compatible = "rockchip,rv1106g-evb1-v11", "rockchip,rv1106";
+        model = "Rockchip RV1106 EVB";
+        compatible = "rockchip,rv1106-evb", "rockchip,rv1106";
+
+        memory@0 {
+                device_type = "memory";
+                reg = <0x00000000 0x10000000>; /* 256 MiB */
+        };
 
         chosen {
-                bootargs = "earlycon=uart8250,mmio32,0xff4c0000 console=ttyFIQ0 snd_soc_core.prealloc_buffer_size_kbytes=16 coherent_pool=0";
+                stdout-path = "serial2:115200n8";
         };
-
-        /delete-node/ vcc5v0-usb;
 };
 
-&pinctrl {
-        /delete-node/ usb;
-};
-
-&sfc {
+&uart2 {
         status = "okay";
-
-        flash@0 {
-                compatible = "spi-nand";
-                reg = <0>;
-                spi-max-frequency = <75000000>;
-                spi-rx-bus-width = <4>;
-                spi-tx-bus-width = <1>;
-        };
-};
-
-&u2phy_otg {
-        /delete-property/ vbus-supply;
-};
-
-&usbdrd_dwc3 {
-        dr_mode = "otg";
-};
-
-&vdd_arm {
-        regulator-min-microvolt = <800000>;
-        regulator-max-microvolt = <1000000>;
-        regulator-init-microvolt = <900000>;
 };

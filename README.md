@@ -7,10 +7,11 @@ The RV1106 is not yet very well documented. For example the actually required SD
 layout which gets burned by the GUI tools provided by Rockchip. Thus there is a lot of guesswork at the moment.
 
 U-Boot was only provided as v2017.11 . The essential sources to allow booting from SD card and/or TFTP have
-been ported to v2026.01 (native version of Yocto 6.0), but they still need some effort to get environment
+been ported to v2026.01 (Yocto 6.0 default), but they still need some effort to get environment
 running again, suitable bootscripts and if wanted drivers to support the SPI flash and booting from SPI flash.
 
-The kernel is still at 5.10.x as newer versions did not boot yet.
+Linux Kernel is at 6.18.x (Yocto 6.0 default) with a minimal patch applied to get it booting. No drivers
+or SoC function have been integrated yet.
 
 ## Usage
 
@@ -54,5 +55,4 @@ dhcp ${loadaddr} fitimage-rv1106 && bootm ${loadaddr}
 
 ## Known limitations
 
-The Linux kernel from Rockchip's `develop-5.10` branch was the last known working version.
-Newer branches (`develop-6.1`, `develop-6.6`) have been tested but did not boot successfully.
+No full-featured system yet. At least it allows booting into Linux giving a login shell.
