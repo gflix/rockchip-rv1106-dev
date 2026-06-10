@@ -1,0 +1,374 @@
+From 9fb8db759832b5056dfbf646543dd766827c8147 Mon Sep 17 00:00:00 2001
+From: Felix Mellmann <flix@benfm.de>
+Date: Wed, 10 Jun 2026 14:41:59 +0200
+Subject: [PATCH] arm: rockchip: add minimal RV1106 support
+
+Add initial platform support for the Rockchip RV1106 SoC (single
+Cortex-A7, GIC-400). This is a minimal bringup without clock or
+pinctrl drivers - relies on U-Boot leaving peripherals configured.
+
+What works:
+- Boot to interactive shell on UART2 (ttyS2, 115200 baud)
+- Native 8250_dw serial driver with interrupts
+- ARMv7 generic timer at 24 MHz
+- GIC-400 interrupt controller
+- VFP/NEON for hard-float userland
+- Initramfs (xz compressed) boot
+
+New files:
+- rv1106.dtsi: minimal SoC device tree (CPU, GIC, timer, UART2)
+- rv1106-evb.dts: board DTS (256 MiB RAM, UART2 console)
+- rv1106.c: minimal machine descriptor
+- rv1106_defconfig: lightweight kernel config
+- rv1106-fitimage.its: FIT image source for mkimage
+
+Introduces temporary ARCH_ROCKCHIP_RV1106 Kconfig to avoid pulling
+in the full Rockchip platform dependencies (PINCTRL, L2X0, REGULATOR,
+SMP) that are not yet needed or applicable.
+
+Tested on Luckfox Pico Max (RV1106G3) with Yocto 6.0 initramfs.
+
+Signed-off-by: Felix Mellmann <flix@benfm.de>
+
+Upstream-Status: Inappropriate [still under development]
+---
+ arch/arm/boot/dts/rockchip/Makefile       |  3 +
+ arch/arm/boot/dts/rockchip/rv1106-evb.dts | 28 +++++++++
+ arch/arm/boot/dts/rockchip/rv1106.dtsi    | 70 +++++++++++++++++++++
+ arch/arm/configs/rv1106_defconfig         | 77 +++++++++++++++++++++++
+ arch/arm/mach-rockchip/Kconfig            | 11 ++++
+ arch/arm/mach-rockchip/Makefile           |  1 +
+ arch/arm/mach-rockchip/rv1106.c           | 28 +++++++++
+ rv1106-fitimage.its                       | 47 ++++++++++++++
+ 8 files changed, 265 insertions(+)
+ create mode 100644 arch/arm/boot/dts/rockchip/rv1106-evb.dts
+ create mode 100644 arch/arm/boot/dts/rockchip/rv1106.dtsi
+ create mode 100644 arch/arm/configs/rv1106_defconfig
+ create mode 100644 arch/arm/mach-rockchip/rv1106.c
+ create mode 100644 rv1106-fitimage.its
+
+diff --git a/arch/arm/boot/dts/rockchip/Makefile b/arch/arm/boot/dts/rockchip/Makefile
+index 716f5540e..982b6202b 100644
+--- a/arch/arm/boot/dts/rockchip/Makefile
++++ b/arch/arm/boot/dts/rockchip/Makefile
+@@ -1,4 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
++dtb-$(CONFIG_ARCH_ROCKCHIP_RV1106) += \
++	rv1106-evb.dtb
++
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rv1108-elgin-r1.dtb \
+ 	rv1108-evb.dtb \
+diff --git a/arch/arm/boot/dts/rockchip/rv1106-evb.dts b/arch/arm/boot/dts/rockchip/rv1106-evb.dts
+new file mode 100644
+index 000000000..424167a36
+--- /dev/null
++++ b/arch/arm/boot/dts/rockchip/rv1106-evb.dts
+@@ -0,0 +1,28 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * RV1106 EVB - minimal bringup board DTS.
++ *
++ * Copyright (c) 2026 Felix Mellmann <flix@benfm.de>
++ */
++
++/dts-v1/;
++
++#include "rv1106.dtsi"
++
++/ {
++	model = "Rockchip RV1106 EVB";
++	compatible = "rockchip,rv1106-evb", "rockchip,rv1106";
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x00000000 0x10000000>; /* 256 MiB */
++	};
++
++	chosen {
++		stdout-path = "serial2:115200n8";
++	};
++};
++
++&uart2 {
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/rockchip/rv1106.dtsi b/arch/arm/boot/dts/rockchip/rv1106.dtsi
+new file mode 100644
+index 000000000..b55b4a66b
+--- /dev/null
++++ b/arch/arm/boot/dts/rockchip/rv1106.dtsi
+@@ -0,0 +1,70 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Minimal RV1106 SoC device tree for initial bringup.
++ *
++ * Copyright (c) 2022 Rockchip Electronics Co., Ltd.
++ * Copyright (c) 2026 Felix Mellmann <flix@benfm.de>
++ */
++
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	compatible = "rockchip,rv1106";
++
++	interrupt-parent = <&gic>;
++
++	aliases {
++		serial2 = &uart2;
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0x0>;
++		};
++	};
++
++	timer {
++		compatible = "arm,armv7-timer";
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
++		clock-frequency = <24000000>;
++	};
++
++	xin24m: oscillator {
++		compatible = "fixed-clock";
++		clock-frequency = <24000000>;
++		clock-output-names = "xin24m";
++		#clock-cells = <0>;
++	};
++
++	gic: interrupt-controller@ff1f0000 {
++		compatible = "arm,gic-400";
++		interrupt-controller;
++		#interrupt-cells = <3>;
++		#address-cells = <0>;
++
++		reg = <0xff1f1000 0x1000>,
++		      <0xff1f2000 0x2000>,
++		      <0xff1f4000 0x2000>,
++		      <0xff1f6000 0x2000>;
++		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
++	};
++
++	uart2: serial@ff4c0000 {
++		compatible = "rockchip,rv1106-uart", "snps,dw-apb-uart";
++		reg = <0xff4c0000 0x100>;
++		interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
++		reg-shift = <2>;
++		reg-io-width = <4>;
++		clock-frequency = <24000000>;
++		status = "disabled";
++	};
++};
+diff --git a/arch/arm/configs/rv1106_defconfig b/arch/arm/configs/rv1106_defconfig
+new file mode 100644
+index 000000000..343b74e24
+--- /dev/null
++++ b/arch/arm/configs/rv1106_defconfig
+@@ -0,0 +1,77 @@
++# Minimal RV1106 bringup config - Phase 1 (earlycon)
++CONFIG_SYSVIPC=y
++CONFIG_NO_HZ_IDLE=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_PREEMPT=y
++CONFIG_LOG_BUF_SHIFT=16
++
++# Platform
++CONFIG_ARCH_MULTI_V7=y
++CONFIG_ARCH_ROCKCHIP_RV1106=y
++
++# CPU
++CONFIG_SMP=n
++CONFIG_ARM_THUMB=y
++CONFIG_VMSPLIT_2G=y
++CONFIG_AEABI=y
++CONFIG_HIGHMEM=y
++CONFIG_VFP=y
++CONFIG_NEON=y
++
++# No other platforms
++# CONFIG_ARCH_MULTI_V4 is not set
++# CONFIG_ARCH_MULTI_V4T is not set
++# CONFIG_ARCH_MULTI_V5 is not set
++
++# Initramfs
++CONFIG_BLK_DEV_INITRD=y
++CONFIG_RD_XZ=y
++
++# Timers / clocksource
++CONFIG_ARM_ARCH_TIMER=y
++CONFIG_ARM_ARCH_TIMER_EVTSTREAM=y
++
++# Serial / console
++CONFIG_SERIAL_8250=y
++CONFIG_SERIAL_8250_CONSOLE=y
++CONFIG_SERIAL_8250_DW=y
++CONFIG_SERIAL_8250_NR_UARTS=4
++CONFIG_SERIAL_8250_RUNTIME_UARTS=4
++CONFIG_SERIAL_OF_PLATFORM=y
++CONFIG_SERIAL_EARLYCON=y
++
++# Console
++CONFIG_TTY=y
++CONFIG_VT=n
++CONFIG_PRINTK=y
++CONFIG_PRINTK_TIME=y
++
++# Device tree
++CONFIG_USE_OF=y
++CONFIG_OF=y
++CONFIG_PROC_DEVICETREE=y
++
++# IRQ
++CONFIG_ARM_GIC=y
++
++# Minimal filesystem (for panic message visibility)
++CONFIG_DEVTMPFS=y
++CONFIG_PROC_FS=y
++CONFIG_SYSFS=y
++CONFIG_TMPFS=y
++
++# No modules for now
++CONFIG_MODULES=n
++
++# No networking
++CONFIG_NET=y
++CONFIG_UNIX=y
++CONFIG_INET=y
++
++# No block layer (no storage yet)
++# CONFIG_BLOCK is not set
++
++# Debugging
++CONFIG_DEBUG_INFO=y
++CONFIG_EARLY_PRINTK=y
++CONFIG_DEBUG_LL=y
+diff --git a/arch/arm/mach-rockchip/Kconfig b/arch/arm/mach-rockchip/Kconfig
+index c90193dd3..23bc8e026 100644
+--- a/arch/arm/mach-rockchip/Kconfig
++++ b/arch/arm/mach-rockchip/Kconfig
+@@ -22,3 +22,14 @@ config ARCH_ROCKCHIP
+ 	help
+ 	  Support for Rockchip's Cortex-A9 Single-to-Quad-Core-SoCs
+ 	  containing the RK2928, RK30xx and RK31xx series.
++
++config ARCH_ROCKCHIP_RV1106
++	bool "Rockchip RV1106 (minimal bringup)"
++	depends on ARCH_MULTI_V7
++	select ARM_GIC
++	select HAVE_ARM_ARCH_TIMER
++	help
++	  Minimal support for the Rockchip RV1106 SoC (single Cortex-A7).
++	  This is a temporary lightweight config for initial bringup without
++	  the full Rockchip platform infrastructure (pinctrl, clock framework,
++	  regulators). Will be merged into ARCH_ROCKCHIP once drivers exist.
+diff --git a/arch/arm/mach-rockchip/Makefile b/arch/arm/mach-rockchip/Makefile
+index 62596d5de..4f4937e75 100644
+--- a/arch/arm/mach-rockchip/Makefile
++++ b/arch/arm/mach-rockchip/Makefile
+@@ -2,5 +2,6 @@
+ CFLAGS_platsmp.o := -march=armv7-a
+
+ obj-$(CONFIG_ARCH_ROCKCHIP) += rockchip.o
++obj-$(CONFIG_ARCH_ROCKCHIP_RV1106) += rv1106.o
+ obj-$(CONFIG_PM_SLEEP) += pm.o sleep.o
+ obj-$(CONFIG_SMP) += headsmp.o platsmp.o
+diff --git a/arch/arm/mach-rockchip/rv1106.c b/arch/arm/mach-rockchip/rv1106.c
+new file mode 100644
+index 000000000..9ddf7a749
+--- /dev/null
++++ b/arch/arm/mach-rockchip/rv1106.c
+@@ -0,0 +1,28 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Minimal machine support for Rockchip RV1106 SoC.
++ *
++ * Copyright (c) 2026 Felix Mellmann <flix@benfm.de>
++ */
++
++#include <linux/init.h>
++#include <linux/of.h>
++#include <linux/of_clk.h>
++#include <linux/clocksource.h>
++#include <asm/mach/arch.h>
++
++static void __init rv1106_timer_init(void)
++{
++	of_clk_init(NULL);
++	timer_probe();
++}
++
++static const char * const rv1106_board_dt_compat[] = {
++	"rockchip,rv1106",
++	NULL,
++};
++
++DT_MACHINE_START(RV1106_DT, "Rockchip RV1106 (Device Tree)")
++	.init_time	= rv1106_timer_init,
++	.dt_compat	= rv1106_board_dt_compat,
++MACHINE_END
+diff --git a/rv1106-fitimage.its b/rv1106-fitimage.its
+new file mode 100644
+index 000000000..72d075ac6
+--- /dev/null
++++ b/rv1106-fitimage.its
+@@ -0,0 +1,47 @@
++/dts-v1/;
++
++/ {
++	description = "RV1106 FIT image - kernel + DTB + initramfs";
++	#address-cells = <1>;
++
++	images {
++		kernel {
++			description = "Linux kernel";
++			data = /incbin/("arch/arm/boot/zImage");
++			type = "kernel";
++			arch = "arm";
++			os = "linux";
++			compression = "none";
++			load = <0x00008000>;
++			entry = <0x00008000>;
++		};
++
++		fdt-evb {
++			description = "RV1106 EVB device tree";
++			data = /incbin/("arch/arm/boot/dts/rockchip/rv1106-evb.dtb");
++			type = "flat_dt";
++			arch = "arm";
++			compression = "none";
++		};
++
++		ramdisk {
++			description = "initramfs";
++			data = /incbin/("../platform-test-image-rockchip-rv1106.cpio.xz");
++			type = "ramdisk";
++			arch = "arm";
++			os = "linux";
++			compression = "none";
++		};
++	};
++
++	configurations {
++		default = "rv1106-evb";
++
++		rv1106-evb {
++			description = "RV1106 EVB";
++			kernel = "kernel";
++			fdt = "fdt-evb";
++			ramdisk = "ramdisk";
++		};
++	};
++};
+--
+2.43.0
+

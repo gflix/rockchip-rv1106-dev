@@ -1,0 +1,105 @@
+# Minimal RV1106 bringup config
+# NOTE: This config must be self-contained for use with allnoconfig base.
+# Everything needed must be explicitly enabled.
+
+CONFIG_SYSVIPC=y
+CONFIG_POSIX_MQUEUE=y
+CONFIG_NO_HZ_IDLE=y
+CONFIG_HIGH_RES_TIMERS=y
+CONFIG_PREEMPT=y
+CONFIG_LOG_BUF_SHIFT=17
+
+# Platform
+CONFIG_MMU=y
+CONFIG_ARCH_MULTI_V7=y
+CONFIG_ARCH_ROCKCHIP_RV1106=y
+
+# CPU
+CONFIG_SMP=n
+CONFIG_ARM_THUMB=y
+CONFIG_VMSPLIT_2G=y
+CONFIG_AEABI=y
+CONFIG_HIGHMEM=y
+CONFIG_VFP=y
+CONFIG_NEON=y
+
+# No other platforms
+# CONFIG_ARCH_MULTI_V4 is not set
+# CONFIG_ARCH_MULTI_V4T is not set
+# CONFIG_ARCH_MULTI_V5 is not set
+# CONFIG_THUMB2_KERNEL is not set
+
+# Initramfs
+CONFIG_BLK_DEV_INITRD=y
+CONFIG_RD_XZ=y
+
+# Timers / clocksource
+CONFIG_ARM_ARCH_TIMER=y
+CONFIG_ARM_ARCH_TIMER_EVTSTREAM=y
+
+# ELF / executable formats (critical for userland)
+CONFIG_BINFMT_ELF=y
+CONFIG_BINFMT_SCRIPT=y
+CONFIG_COREDUMP=y
+
+# Serial / console
+CONFIG_TTY=y
+CONFIG_SERIAL_8250=y
+CONFIG_SERIAL_8250_CONSOLE=y
+CONFIG_SERIAL_8250_DW=y
+CONFIG_SERIAL_8250_NR_UARTS=4
+CONFIG_SERIAL_8250_RUNTIME_UARTS=4
+CONFIG_SERIAL_OF_PLATFORM=y
+CONFIG_SERIAL_EARLYCON=y
+
+# Console
+CONFIG_VT=n
+CONFIG_PRINTK=y
+CONFIG_PRINTK_TIME=y
+
+# Device tree
+CONFIG_USE_OF=y
+CONFIG_OF=y
+
+# IRQ
+CONFIG_ARM_GIC=y
+
+# Filesystem support
+CONFIG_DEVTMPFS=y
+CONFIG_DEVTMPFS_MOUNT=y
+CONFIG_PROC_FS=y
+CONFIG_PROC_SYSCTL=y
+CONFIG_SYSFS=y
+CONFIG_TMPFS=y
+CONFIG_TMPFS_POSIX_ACL=y
+
+# Pseudo-terminal support (needed for getty/login)
+CONFIG_UNIX98_PTYS=y
+
+# No modules for now
+CONFIG_MODULES=n
+
+# Networking (needed for udevd netlink + basic userland)
+CONFIG_NET=y
+CONFIG_PACKET=y
+CONFIG_UNIX=y
+CONFIG_INET=y
+CONFIG_NETFILTER=n
+
+# No block layer (no storage yet)
+# CONFIG_BLOCK is not set
+
+# Multiuser support
+CONFIG_MULTIUSER=y
+
+# Sysctl, signalfd, timerfd, eventfd, epoll (needed by systemd/udevd)
+CONFIG_SIGNALFD=y
+CONFIG_TIMERFD=y
+CONFIG_EVENTFD=y
+CONFIG_EPOLL=y
+CONFIG_INOTIFY_USER=y
+
+# Debugging
+CONFIG_DEBUG_INFO=y
+CONFIG_EARLY_PRINTK=y
+CONFIG_DEBUG_LL=y
