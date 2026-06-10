@@ -4,6 +4,6 @@ header:
   - kas-rockchip-rv1106-dev.yml
 
 target:
-  - core-image-minimal
+  - platform-test-image
 
 task: populate_sdk
